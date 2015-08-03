@@ -1,0 +1,41 @@
+---
+tcp:
+  labels:
+  - Source Port
+  - Destination Port
+  - Sequence Number
+  - Acknowledgement Number
+  - Data Offset
+  - RESERVED
+  - ECN
+  - Control Bits
+  - Window
+  - Checksum
+  - Urgent Pointer
+  - Options and Padding
+  sizes:
+  - 16
+  - 16
+  - 32
+  - 32
+  - 4
+  - 3
+  - 3
+  - 6
+  - 16
+  - 16
+  - 16
+  - 32
+  query: "((tcp[12:1] & 0xf0) >> 2)"
+udp:
+  labels:
+  - Source Port
+  - Destination Port
+  - Length
+  - Checksum
+  sizes:
+  - 16
+  - 16
+  - 16
+  - 16
+  query: '8'
