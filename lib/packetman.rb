@@ -2,16 +2,17 @@ require 'yaml'
 require "packetman/version"
 require "packetman/config"
 require "packetman/table"
+require "packetman/compose"
 
 module Packetman
   class << self
 
-    def config(opt_hash = {})
-      @config ||= Config.new(opt_hash)
+    def config
+      @config ||= Config.new
     end
 
-    def config!(opt_hash = {})
-      @config = Config.new(opt_hash)
+    def config!
+      @config = Config.new
     end
 
     def user_input(prompt)
@@ -23,7 +24,8 @@ module Packetman
       input = input.to_s(2) if input.kind_of? Integer
 
       # convert binary string to an array of 32bit hex "strings"
-      input.reverse.scan(/.{1,32}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16).prepend('0x') }.reverse
+      # multiple reversing ensures we scan from the right, but end up with properly ordered strings/array
+      input.reverse.scan(/.{1,4}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16) }.reverse.join.scan(/.{1,8}/).map{ |hex| hex.prepend('0x') }
     end
 
     def hex_to_bin(hexnum)

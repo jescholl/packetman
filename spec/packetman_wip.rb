@@ -5,11 +5,12 @@ describe Packetman do
     expect(Packetman::VERSION).not_to be nil
   end
 
-  describe '.hex_encode' do
-    context 'with a string' do
-      let(:short) { 'H' }
-      let(:medium) { 'Help' }
-      let(:long) { 'Help it burns!' }
+  context 'with a string' do
+    let(:short) { 'H' }
+    let(:medium) { 'Help' }
+    let(:long) { 'Help it burns!' }
+
+    describe '.hex_encode' do
       it 'works with less than 32 bits' do
         expect(Packetman.hex_encode(short)).to eq(["0x48"])
       end
@@ -20,10 +21,14 @@ describe Packetman do
         expect(Packetman.hex_encode(long)).to eq(["0x48656c70", "0x20697420", "0x6275726e", "0x7321"])
       end
     end
-    context 'with an integer' do
-      let(:short) { 123 }
-      let(:medium) { 2882343476 }
-      let(:long) { 50707717374670895242426 }
+  end
+
+  context 'with an integer' do
+    let(:short) { 123 }
+    let(:medium) { 2882343476 }
+    let(:long) { 50707717374670895242426 }
+
+    describe '.hex_encode' do
       it 'works with less than 32 bits' do
         expect(Packetman.hex_encode(short)).to eq(["0x7b"])
       end
@@ -34,7 +39,9 @@ describe Packetman do
         expect(Packetman.hex_encode(long)).to eq(["0xabcdef12", "0x34321fed", "0xcba"])
       end
     end
+
   end
+end
 
   #  it 'calculates binary wildcard strings correctly' do
   #    # "(tcp[13:4] & 0xfff0) = 0x1010"

@@ -1,0 +1,156 @@
+7a 
+1111010
+
+#NOTE: I think this is wrong
+# also, maybe I don't need to worry about the bits bing aligned on the byte, just on the bit, as long as it's what the user asked for
+
+hex and string need to be 0 padded on the left
+binary needs to fill to the right to hex encode, starting at the offset bit
+
+Packetman.compose3("0b1111", 3)
+1111
+(fill right to ((4+3)/8.to_f).ceil*8 = 8 )
+11110000
+(shift mask and search >> 3)
+00011110
+00011110
+(sample byte sequence)
+00011111
+
+Packetman.compose3("0b1111010", 3)
+1111010
+(fill right to ((7+3)/8.to_f).ceil*8 = 16)
+11110100 00000000
+(shift mask and search >> 3)
+00011111 11000000
+00011110 10000000
+(sample byte sequence)
+00011110 10101010
+
+
+Packetman.compose3("0b1111010????????", 3)
+1111010? ???????
+(fill right to ((15+3)/8.to_f).ceil*8 = 24)
+1111010? ???????0 00000000
+(shift mask and search >> 3)
+00011111 11000000 00000000
+00011110 10000000 00000000
+(sample byte sequence)
+00011110 10101010 10101010
+
+Packetman.compose3("0x123",3)
+100100011
+(left fill to 12 first, or manual right fill with 16-12)
+(fill right to ((3*4)+3)/8.to_f).ceil*8 = 16)
+00010010 00110000
+(shift mask and search >> 3)
+00000011 11111110
+00000010 01000110
+(sample byte sequence)
+00000010 01000111
+
+
+
+
+Packetman.compose3("0xa",3)
+"((tcp[0:1] & 0xa) >>  1) = 0xa"
+1010
+(generate shifted mask)
+00011110
+(generate shifted search)
+00010100
+(sample byte sequence)
+10010101
+
+0b00011110 & 0b10010101 == 0x14
+
+
+
+
+
+
+Packetman.compose3("0b001010010", 3)
+"((tcp[0:2] & 0x1ff0) >> 4 = 0x52"
+001010010
+(generate shifted mask)
+(turn preceding 0s to 1s)
+(left shift (((binlen)+3)/8.to_f).ceil*8 - binlen - 3)
+1111111110000
+(generate shifted search - same as above)
+0010100100000
+(sample byte sequence)
+0010100101010
+
+0b0010100101010 & 1111111110000 == 0b0010100100000
+
+
+Packetman.compose3("0b00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011???????", 5)
+00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011???????
+(generate search str - replace ?s with 0s)
+00001010011100001010100101010100000010101111100001111101010011110101010000000000101001010101000110000000
+(generate shifted mask)
+(turn preceding 0s to 1s)
+(left shift (((binlen)+5)/8.to_f).ceil*8 - binlen - 5)
+11001111011101111111100111111110000011111111110001111111111111111111110000000000111111111111111110000000000
+11001111011101111111100111111110000011111111110001111111111111111111110000000000111111111111111110000000
+(generate shifted search - same as above)
+00001010011100001010100101010100000010101111100001111101010011110101010000000000101001010101000110000000000
+(sample byte sequence)
+00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101
+
+00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101 &
+11001111011101111111100111111110000011111111110001111111111111111111110000000000111111111111111110000000000 ==
+00001010011100001010100101010100000010101111100001111101010011110101010000000000101001010101000110000000000
+
+
+# NOTE
+
+instead of shifting the product of (mask & input), shift search
+this makes the form
+"tcp[0:1] & mask = shifted_search"
+
+
+Packetman.compose3("0xa",1)
+"((tcp[0:1] & 0x78) >> 3) = 0xa"
+1010
+(generate shifted mask)
+(left shift (((hexlen*4)+1)/8.to_f).ceil*8 - hexlen*4 - 1)
+(use length of mask to determine how much data to take)
+01111000
+(sample byte sequence)
+11010101
+
+(0b01111000 & 0b11010101) >> 3 == 0xa
+
+
+Packetman.compose3("0x123", 3)
+"((tcp[0:2] & 0x1ffe) >> 1) = 0x123"
+100100011
+(hex: left fill with 1s to hexlen*4) 
+111100100011
+(generate shifted mask)
+(left shift (((hexlen*4)+3)/8.to_f).ceil*8 - hexlen*4 - 3)
+(use length of mask to determine how much data to take)
+0001111111111110
+(sample byte sequence)
+1000001001000111
+
+(0b1000001001000111 & 0b0001111111111110) >> 1 == 0x123
+
+Packetman.compose3("abc", 3)
+"((tcp[0:4] & 0x1fffffe0 >> 5) = 0x616263"
+11000010110001001100011
+(str: left fill with 1s to len*8)
+111000010110001001100011
+(generate shifted mask)
+(left shift (((strlen*8)+3)/8.to_f).ceil*8 - strlen*8 - 3)
+(use length of mask to determine how much data to take)
+00011111 11111111 11111111 11100000
+(sample byte sequence)
+10101100 00101100 01001100 01110101
+
+(0b10101100001011000100110001110101 & 0b00011111111111111111111111100000) >> 5 == 0b11000010110001001100011
+
+
+
+
