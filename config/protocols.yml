@@ -1,41 +1,41 @@
 ---
 tcp:
-  labels:
-  - Source Port
-  - Destination Port
-  - Sequence Number
-  - Acknowledgement Number
-  - Data Offset
-  - RESERVED
-  - ECN
-  - Control Bits
-  - Window
-  - Checksum
-  - Urgent Pointer
-  - Options and Padding
-  sizes:
-  - 16
-  - 16
-  - 32
-  - 32
-  - 4
-  - 3
-  - 3
-  - 6
-  - 16
-  - 16
-  - 16
-  - 32
-  query: "((tcp[12:1] & 0xf0) >> 2)"
+  table:
+    Source Port: 16
+    Destination Port: 16
+    Sequence Number: 32
+    Acknowledgement Number: 32
+    Data Offset: 4
+    RESERVED: 3
+    ECN: 3
+    Control Bits: 6
+    Window: 16
+    Checksum: 16
+    Urgent Pointer: 16
+    Options and Padding: 32
+  fields:
+    Source Port: 0
+    Destination Port: 16
+    Sequence Number: 32
+    Acknowledgement Number: 64
+    Data Offset: 96
+    RESERVED: 100
+    ECN: 103
+    Control Bits: 106
+    Window: 112
+    Checksum: 128
+    Urgent Pointer: 144
+    Options and Padding: 160
+  payload_query: '((tcp[12:1] & 0xf0) >> 2)'
 udp:
-  labels:
-  - Source Port
-  - Destination Port
-  - Length
-  - Checksum
-  sizes:
-  - 16
-  - 16
-  - 16
-  - 16
-  query: '8'
+  table:
+    Source Port: 16
+    Destination Port: 16
+    Length: 16
+    Checksum: 16
+  fields:
+    Source Port: 0
+    Destination Port: 16
+    Length: 32
+    Checksum: 48
+  payload_query: 8

@@ -1,15 +1,13 @@
 module Packetman
   class Compose
-    attr_accessor :offset
 
-    def initialize(input, offset, radix=nil)
-      @offset = offset
+    def initialize(input, radix=nil)
       @input = input
       @radix = radix
     end
     
     def desired_length
-      ((@input.length + @offset)/8.to_f).ceil*8 - @offset
+      ((@input.length + Packetman.config.offset)/8.to_f).ceil*8 - Packetman.config.offset
     end
 
     def bit_density(radix=@radix)
@@ -79,13 +77,17 @@ module Packetman
       end
     end
 
+    def start_byte(position)
+      "#{Packetman.config.payload_query} + #{(Packetman.config.offset + position)/8}"
+    end
+
     def to_s
       clauses = []
-      start_bit = @offset
+      position = 0
       search_hex.zip(mask_hex).each_with_index do |(hex_search, hex_mask),i|
         search_bit_length = full_bit_length(hex_search)
-        clauses << "(tcp[#{start_bit/8}:#{search_bit_length/8}] & #{hex_mask} = #{hex_search})"
-        start_bit += search_bit_length
+        clauses << "#{Packetman.config.transport}[#{start_byte(position)}:#{search_bit_length/8}] & #{hex_mask} = #{hex_search}"
+        position += search_bit_length
       end
 
       clauses.join(' && ')
