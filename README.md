@@ -1,8 +1,20 @@
 # Packetman
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/packetman`. To experiment with that code, run `bin/console` for an interactive prompt.
+Advanced tcpdump and Wireshark capture generator.
 
-TODO: Delete this and the text above, and describe your gem
+[![Code Climate](https://codeclimate.com/github/jescholl/packetman/badges/gpa.svg)](https://codeclimate.com/github/jescholl/packetman) [![Test Coverage](https://codeclimate.com/github/jescholl/packetman/badges/coverage.svg)](https://codeclimate.com/github/jescholl/packetman/coverage) [![Circle CI](https://circleci.com/gh/jescholl/packetman.svg?style=svg)](https://circleci.com/gh/jescholl/packetman)
+
+Packetman is an all-purpose capture generator modeled after [Wireshark's String-Matching Capture Filter Generator](https://www.wireshark.org/tools/string-cf.html) but with a lot more features allowing much finer control over the packets you see.
+
+Features: (**currently in development)
+  * String-matching (just like Wireshark's tool)
+  * bit-string matching
+  * hex-string matching
+  * easy masking through `?` wildcard characters
+  * offsets in bits or bytes*
+  * use header field name instead of manual offsets*
+  * application specific queries*
+  * built-in header reference tables
 
 ## Installation
 
@@ -32,7 +44,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/packetman.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jescholl/packetman.
 
 
 ## License

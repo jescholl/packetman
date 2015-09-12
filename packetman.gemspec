@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jason Scholl"]
   spec.email         = ["jason.e.scholl@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Advanced tcpdump and Wiresharp filter generator.}
+  spec.description   = %q{Simple tool for creating advanced tcpdump queries, because manually writing `tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420` is no fun.}
+  spec.homepage      = "https://github.com/jescholl/packetman"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.3"
-  spec.add_development_dependency "simplecov", "~> 0.10"
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "codeclimate-test-reporter"
 end
