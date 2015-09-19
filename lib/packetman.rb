@@ -1,6 +1,7 @@
 require 'yaml'
 require "packetman/version"
 require "packetman/config"
+require "packetman/config_methods"
 require "packetman/table"
 require "packetman/compose"
 

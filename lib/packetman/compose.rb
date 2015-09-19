@@ -1,13 +1,14 @@
 module Packetman
   class Compose
+    include ConfigMethods
 
-    def initialize(input, radix=Packetman.config.radix)
+    def initialize(input, radix=config.radix)
       @input = input
       @radix = radix
     end
     
     def desired_length
-      ((@input.length + Packetman.config.offset)/8.to_f).ceil*8 - Packetman.config.offset
+      ((@input.length + config.offset)/8.to_f).ceil*8 - config.offset
     end
 
     def bit_density(radix=@radix)
@@ -32,7 +33,7 @@ module Packetman
 
     def mask_chr(chr)
       if chr == '?'
-        raise "wildcards not allowed" unless Packetman.config.allow_wildcards
+        raise "wildcards not allowed" unless config.allow_wildcards
         0
       else
         radix_mask
@@ -41,7 +42,7 @@ module Packetman
 
     def bin_chr(chr)
       if chr == '?'
-        raise "wildcards not allowed" unless Packetman.config.allow_wildcards
+        raise "wildcards not allowed" unless config.allow_wildcards
         chr = '0'
       end
 
@@ -78,7 +79,7 @@ module Packetman
     end
 
     def start_byte(position)
-      "#{Packetman.config.payload_query} + #{(Packetman.config.offset + position)/8}"
+      "#{config.payload_query} + #{(config.offset + position)/8}"
     end
 
     def to_s
@@ -86,7 +87,7 @@ module Packetman
       position = 0
       search_hex.zip(mask_hex).each_with_index do |(hex_search, hex_mask),i|
         search_bit_length = full_bit_length(hex_search)
-        clauses << "#{Packetman.config.transport}[#{start_byte(position)}:#{search_bit_length/8}] & #{hex_mask} = #{hex_search}"
+        clauses << "#{config.transport}[#{start_byte(position)}:#{search_bit_length/8}] & #{hex_mask} = #{hex_search}"
         position += search_bit_length
       end
 

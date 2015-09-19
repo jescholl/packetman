@@ -1,5 +1,7 @@
 module Packetman
   class Table
+    include ConfigMethods
+
     attr_reader :line_h, :line_v
     attr_accessor :columns
 
@@ -20,34 +22,33 @@ module Packetman
     end
 
     def column_width
-      (columns-1).to_s.length + 1
+      (columns-1).to_s.length
     end
 
     def horizontal_bar
-      line_v + line_h*(table_width - 1) + line_v + "\n"
+      line_v + line_h*(table_width - 2) + line_v + "\n"
     end
 
     def table_width
-      columns*column_width
+      columns*(column_width + 1) + 1
     end
 
     def cell_size(field_size)
-      field_size*column_width - 1
+      field_size*(column_width + 1) - 1
+    end
+
+    def header_row
+      line_v + columns.times.map{ |n| sprintf "%0#{column_width}d", n }.join(line_v) + line_v + "\n"
     end
 
     def to_s
-      output = horizontal_bar
-      output += line_v + [*0..(columns-1)].map{ |n| "%0#{column_width - 1}d" % n }.join(line_v) + line_v + "\n"
-      output += horizontal_bar
+      output = horizontal_bar + header_row + horizontal_bar
 
-      tmp_output = line_v
-      Packetman.config.protocols[Packetman.config.transport]['table'].each do |label, size|
-        tmp_output += sprintf "%.#{cell_size(size)}s%s", label.center(cell_size(size)), line_v
-
-        if tmp_output.length == (table_width+1)
-          output += tmp_output + "\n"
+      config.protocols[config.transport]['table'].each do |label, size|
+        output += sprintf "%s%.#{cell_size(size)}s", line_v, label.center(cell_size(size))
+        if output.split("\n").last.length == (table_width - 1)
+          output += line_v + "\n"
           output += horizontal_bar
-          tmp_output = line_v
         end
       end
       output
