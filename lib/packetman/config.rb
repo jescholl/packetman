@@ -51,7 +51,9 @@ module Packetman
 
       @opts.parse!
 
-      return ARGV.pop if ARGV.size == 1
+      raise "Incorrect number of command line arguments" if ARGV.size != 1
+
+      ARGV.pop
 
 
 #      if transport !~ /tcp|udp/i ||

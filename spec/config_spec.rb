@@ -12,47 +12,57 @@ describe Packetman::Config do
   end
 
   describe '#parse_opts' do
+    it 'should fail when given no filter string' do
+      overwrite_constant :ARGV, []
+      expect{Packetman.config.parse_opts}.to raise_error{"Incorrect number of command line arguments"}
+    end
+
+    it 'should return the filter string' do
+      overwrite_constant :ARGV, %w{ foo }
+      expect(Packetman.config.parse_opts).to eq('foo')
+    end
+
     it 'should respect -t' do
-      overwrite_constant :ARGV, %w{ -t udp }
+      overwrite_constant :ARGV, %w{ -t udp foo }
       expect{Packetman.config.parse_opts}.to change{Packetman.config.transport}.from("tcp").to("udp")
     end
 
     it 'should respect -a' do
-      overwrite_constant :ARGV, %w{ -a icmp }
+      overwrite_constant :ARGV, %w{ -a icmp foo }
       Packetman.config.parse_opts
       expect(Packetman.config.application).to eq('icmp')
     end
 
     it 'should respect -r' do
-      overwrite_constant :ARGV, %w{ -r 123 }
+      overwrite_constant :ARGV, %w{ -r 123 foo }
       Packetman.config.parse_opts
       expect(Packetman.config.radix).to eq(123)
     end
 
     it 'should respect -o' do
-      overwrite_constant :ARGV, %w{ -o 123 }
+      overwrite_constant :ARGV, %w{ -o 123 foo }
       Packetman.config.parse_opts
       expect(Packetman.config.offset).to eq(123)
     end
 
     it 'should respect -b' do
-      overwrite_constant :ARGV, %w{ -b }
+      overwrite_constant :ARGV, %w{ -b foo }
       expect{Packetman.config.parse_opts}.to change{Packetman.config.offset_units}.from("bits").to("bytes")
     end
 
     it 'should respect -O' do
-      overwrite_constant :ARGV, %w{ -O transport}
+      overwrite_constant :ARGV, %w{ -O transport foo }
       expect{Packetman.config.parse_opts}.to change{Packetman.config.offset_type}.from("application").to("transport")
     end
 
     it 'should respect --wildcards' do
-      overwrite_constant :ARGV, %w{ --wildcards }
+      overwrite_constant :ARGV, %w{ --wildcards foo }
       Packetman.config.parse_opts
       expect(Packetman.config.allow_wildcards).to eq(true)
     end
 
     it 'should respect --no-wildcards' do
-      overwrite_constant :ARGV, %w{ --no-wildcards }
+      overwrite_constant :ARGV, %w{ --no-wildcards foo }
       Packetman.config.parse_opts
       expect(Packetman.config.allow_wildcards).to eq(false)
     end
