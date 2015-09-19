@@ -2,7 +2,7 @@ require 'optparse'
 
 module Packetman
   class Config
-    attr_accessor :transport, :application, :offset_units, :offset_type, :allow_wildcards
+    attr_accessor :transport, :application, :offset_units, :offset_type, :allow_wildcards, :radix
     attr_writer :offset
 
     def initialize
@@ -42,13 +42,16 @@ module Packetman
         opt.on("-t", "--transport [PROTO]", protocols.keys, "Transport Protocol (#{protocols.keys.join(',')})") {|v| self.transport = v }
         opt.on("-a", "--application [PROTO]", ['http', 'dns', 'icmp'], "Application protocol (http, dns, icmp)") { |v| self.application = v }
         #opt.on("-a", "--application [PROTO]", String, "Application Protocol (http|dns|icmp)") {|v| self.application = v }
+        opt.on("-r", "--radix [RADIX]", Integer, "Treat FILTER_STRING as RADIX instead of String") {|v| self.radix = v; }
         opt.on("-o", "--offset [OFFSET]", Integer, "Offset in bits") {|v| self.offset = v; }
         opt.on("-b", "--byte-offset", "Use 8-bit bytes instead of bits for offset") { |v| self.offset_units = "bytes" }
         opt.on("-O", "--offset-type [TYPE]", ["application", "transport"], "Begin offset at the application/transport header.") { |v|  self.offset_type = v }
-        opt.on("--[no]wildcards", "Allow '?' wildcards") { |v| self.allow_wildcards = v }
+        opt.on("--[no-]wildcards", "Allow '?' wildcards") { |v| self.allow_wildcards = v }
       end
 
       @opts.parse!
+
+      return ARGV.pop if ARGV.size == 1
 
 
 #      if transport !~ /tcp|udp/i ||

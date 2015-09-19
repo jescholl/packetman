@@ -15,10 +15,6 @@ module Packetman
       @config = Config.new
     end
 
-    def compose
-      @compose ||= Compose.new
-    end
-
     def user_input(prompt)
       puts prompt
       gets

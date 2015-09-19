@@ -1,7 +1,7 @@
 module Packetman
   class Compose
 
-    def initialize(input, radix=nil)
+    def initialize(input, radix=Packetman.config.radix)
       @input = input
       @radix = radix
     end
