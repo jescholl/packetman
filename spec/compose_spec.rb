@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Packetman
   describe Compose do
-    before(:all) { Packetman.config.offset = 5 }
+    before(:each) { Packetman.config.offset = 5 }
     let (:compose) { Packetman::Compose.new("00??10100011???????", 2) }
 
     describe '#desired_length' do
