@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require 'packetman'
+
+search_str = Packetman.config.parse_opts
+
+puts Packetman::Compose.new(search_str)
