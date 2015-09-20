@@ -19,7 +19,7 @@ module Packetman
 
         it 'should have the right values in the cells' do
           expect(table.to_s.split(/\n|-|\|/).reject{ |f| /^\d*$/.match(f) }.map(&:strip)).
-            to eq(Packetman.config.protocols['tcp']['table'].keys)
+            to eq(Packetman.config.protocols['transport']['tcp']['table'].keys)
         end
       end
 
@@ -31,7 +31,7 @@ module Packetman
 
         it 'should have the right values in the cells' do
           expect(table.to_s.split(/\n|-|\|/).reject{ |f| /^\d*$/.match(f) }.map(&:strip)).
-            to eq(Packetman.config.protocols['udp']['table'].keys)
+            to eq(Packetman.config.protocols['transport']['udp']['table'].keys)
         end
       end
     end

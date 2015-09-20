@@ -14,7 +14,7 @@ describe Packetman::Config do
   describe '#parse_opts' do
     it 'should fail when given no filter string' do
       overwrite_constant :ARGV, []
-      expect{Packetman.config.parse_opts}.to raise_error{"Incorrect number of command line arguments"}
+      expect{Packetman.config.parse_opts}.to raise_error{"Invalid command line arguments"}
     end
 
     it 'should return the filter string' do
@@ -28,9 +28,9 @@ describe Packetman::Config do
     end
 
     it 'should respect -a' do
-      overwrite_constant :ARGV, %w{ -a icmp foo }
+      overwrite_constant :ARGV, %w{ -a dns foo }
       Packetman.config.parse_opts
-      expect(Packetman.config.application).to eq('icmp')
+      expect(Packetman.config.application).to eq('dns')
     end
 
     it 'should respect -r' do

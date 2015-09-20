@@ -1,41 +1,35 @@
 ---
-tcp:
-  table:
-    Source Port: 16
-    Destination Port: 16
-    Sequence Number: 32
-    Acknowledgement Number: 32
-    Data Offset: 4
-    RESERVED: 3
-    ECN: 3
-    Control Bits: 6
-    Window: 16
-    Checksum: 16
-    Urgent Pointer: 16
-    Options and Padding: 32
-  fields:
-    Source Port: 0
-    Destination Port: 16
-    Sequence Number: 32
-    Acknowledgement Number: 64
-    Data Offset: 96
-    RESERVED: 100
-    ECN: 103
-    Control Bits: 106
-    Window: 112
-    Checksum: 128
-    Urgent Pointer: 144
-    Options and Padding: 160
-  payload_query: '((tcp[12:1] & 0xf0) >> 2)'
-udp:
-  table:
-    Source Port: 16
-    Destination Port: 16
-    Length: 16
-    Checksum: 16
-  fields:
-    Source Port: 0
-    Destination Port: 16
-    Length: 32
-    Checksum: 48
-  payload_query: 8
+transport:
+  tcp:
+    table:
+      Source Port: 16
+      Destination Port: 16
+      Sequence Number: 32
+      Acknowledgement Number: 32
+      Data Offset: 4
+      RESERVED: 3
+      ECN: 3
+      Control Bits: 6
+      Window: 16
+      Checksum: 16
+      Urgent Pointer: 16
+      Options and Padding: 32
+    payload_query: '((tcp[12:1] & 0xf0) >> 2)'
+  udp:
+    table:
+      Source Port: 16
+      Destination Port: 16
+      Length: 16
+      Checksum: 16
+    payload_query: 8
+  icmp:
+    table:
+      Type: 8
+      Code: 8
+      Checksum: 16
+      Type Specific Options: 32
+application:
+  http:
+    transport_protocol: tcp
+  dns:
+    transport_protocol: tcp

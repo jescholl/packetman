@@ -21,7 +21,7 @@ module Packetman
     def payload_query
       case offset_type
       when "application"
-        protocols[transport.to_s]['payload_query']
+        protocols['transport'][transport.to_s]['payload_query']
       else
         "0"
       end
@@ -38,9 +38,9 @@ module Packetman
 
     def parse_opts
       @opts ||= OptionParser.new do |opt|
-        opt.banner = "Usage: #{__FILE__} [OPTIONS] FILTER_STRING"
-        opt.on("-t", "--transport [PROTO]", protocols.keys, "Transport Protocol (#{protocols.keys.join(',')})") {|v| self.transport = v }
-        opt.on("-a", "--application [PROTO]", ['http', 'dns', 'icmp'], "Application protocol (http, dns, icmp)") { |v| self.application = v }
+        opt.banner = "Usage: #{File.basename($PROGRAM_NAME)} [OPTIONS] FILTER_STRING"
+        opt.on("-t", "--transport [PROTO]", protocols['transport'].keys, "Transport Protocol (#{protocols['transport'].keys.join(',')})") {|v| self.transport = v }
+        opt.on("-a", "--application [PROTO]", protocols['application'].keys, "Application protocol (#{protocols['application'].keys.join(',')})") { |v| self.application = v }
         #opt.on("-a", "--application [PROTO]", String, "Application Protocol (http|dns|icmp)") {|v| self.application = v }
         opt.on("-r", "--radix [RADIX]", Integer, "Treat FILTER_STRING as RADIX instead of String") {|v| self.radix = v; }
         opt.on("-o", "--offset [OFFSET]", Integer, "Offset in bits") {|v| self.offset = v; }
@@ -51,7 +51,7 @@ module Packetman
 
       @opts.parse!
 
-      raise "Incorrect number of command line arguments" if ARGV.size != 1
+      raise "Invalid command line arguments" if ARGV.size != 1
 
       ARGV.pop
 

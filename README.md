@@ -6,14 +6,14 @@ Advanced tcpdump and Wireshark capture generator.
 
 Packetman is a packet capture filter generator modeled after [Wireshark's String-Matching Capture Filter Generator](https://www.wireshark.org/tools/string-cf.html) but with a lot more features allowing much finer control over the packets you see.
 
-Features: (*currently in development)
+Features:
   * String-matching (just like Wireshark's tool)
   * bit-string matching
   * hex-string matching
   * easy masking through `?` wildcard characters
-  * offsets in bits or bytes*
-  * use header field name instead of manual offsets*
-  * application specific queries*
+  * offsets in bits or bytes
+  * use header field name instead of manual offsets
+  * application specific queries
   * built-in header reference tables
 
 ## Installation
