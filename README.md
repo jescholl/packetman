@@ -1,5 +1,7 @@
 # Packetman
 
+[![Gem Version](https://badge.fury.io/rb/packetman.svg)](http://badge.fury.io/rb/packetman)
+
 Advanced tcpdump and Wireshark capture generator.
 
 [![Code Climate](https://codeclimate.com/github/jescholl/packetman/badges/gpa.svg)](https://codeclimate.com/github/jescholl/packetman) [![Test Coverage](https://codeclimate.com/github/jescholl/packetman/badges/coverage.svg)](https://codeclimate.com/github/jescholl/packetman/coverage) [![Circle CI](https://circleci.com/gh/jescholl/packetman.svg?style=svg)](https://circleci.com/gh/jescholl/packetman)

@@ -15,10 +15,5 @@ module Packetman
     def config!
       @config = Config.new
     end
-
-    def user_input(prompt)
-      puts prompt
-      gets
-    end
   end
 end
