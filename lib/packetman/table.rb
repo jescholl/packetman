@@ -44,7 +44,7 @@ module Packetman
     def to_s
       output = horizontal_bar + header_row + horizontal_bar
 
-      config.protocols['transport'][config.transport]['table'].each do |label, size|
+      protocols[config.transport]['table'].each do |label, size|
         output += sprintf "%s%.#{cell_size(size)}s", line_v, label.center(cell_size(size))
         if output.split("\n").last.length == (table_width - 1)
           output += line_v + "\n"

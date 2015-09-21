@@ -7,5 +7,9 @@ module Packetman
     def config
       Packetman.config
     end
+
+    def protocols
+      config.protocols
+    end
   end
 end
