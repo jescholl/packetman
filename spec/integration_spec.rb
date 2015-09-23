@@ -2,12 +2,12 @@ require 'spec_helper'
 
 module Packetman
   describe "integration" do
+    before(:each) { Packetman.config.allow_wildcards = true }
     context "with 5 bit offset" do
       let (:compose) { Packetman::Compose.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0", 2) }
       let (:data)                            {"00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101"}
       before(:each) do
         Packetman.config.offset = 5
-        Packetman.config.allow_wildcards = true
       end
       describe "the raw data" do
         it 'should match the binary sample' do
@@ -37,7 +37,6 @@ module Packetman
       let (:data)                            {"00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100"}
       before(:each) do
         Packetman.config.offset = 0
-        Packetman.config.allow_wildcards = true
       end
       describe "the raw data" do
         it "should match the binary sample" do
@@ -66,6 +65,39 @@ module Packetman
           compose.search_hex.zip(compose.mask_hex, compose.hex_encode(data)).each do |search, mask, data|
             expect((data.to_i(16) & mask.to_i(16)).to_s(2)).not_to eq(search.to_i(16).to_s(2))
           end
+        end
+      end
+    end
+
+    context 'with a 92 bit input string and 4 bit offset' do
+      describe 'the output string' do
+        let (:compose) { Packetman::Compose.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????101001010101", 2) }
+        before(:each) { Packetman.config.offset = 4 }
+        it 'should have have a 32 bit first clause' do
+          clause = compose.to_s.split('&&')[0]
+          search = clause.split('=').last.strip
+          expect(compose.bit_length(search)).to eq(32)
+        end
+
+        it 'should have have a 32 bit second clause' do
+          clause = compose.to_s.split('&&')[1]
+          search = clause.split('=').last.strip
+          expect(compose.bit_length(search)).to eq(32)
+        end
+
+        it 'should have have a 28 bit third clause' do
+          clause = compose.to_s.split('&&')[2]
+          search = clause.split('=').last.strip
+          expect(compose.bit_length(search)).to eq(28)
+        end
+
+        it 'should match the regex' do
+          hex_chars = "0-9a-fx"
+          data_address = "\\[[\\(\\[0-9a-z\:& \\>+\\]\\)]+:\\d+\\]"
+          clause = "\\w+#{data_address} & [#{hex_chars}]+ = [#{hex_chars}]+"
+          regex = /(#{clause}( &&)? )+/
+
+          expect(compose.to_s).to match(regex)
         end
       end
     end

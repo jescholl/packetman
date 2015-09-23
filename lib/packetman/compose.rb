@@ -65,9 +65,7 @@ module Packetman
       bin_str.reverse.scan(/.{1,4}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16) }.reverse.join.scan(/.{1,8}/).map{ |hex| hex.prepend('0x') }
     end
 
-    def full_bit_length(num, radix=nil)
-      return num.to_i(radix).to_s(radix).length * bit_density(radix) if radix
-      
+    def bit_length(num)
       case num
       when /^0x/
         $'.length * bit_density(16)
@@ -78,20 +76,18 @@ module Packetman
       end
     end
 
-    def start_byte(position)
-      "#{config.payload_query} + #{(config.offset + position)/8}"
+    def start_byte(bit_position)
+      [config.payload_query, (config.offset + bit_position)/8].compact.join(' + ')
+    end
+
+    def data_address(start_bit, bit_length)
+      "#{config.transport}[#{start_byte(start_bit)}:#{bit_length/8}]"
     end
 
     def to_s
-      clauses = []
-      position = 0
-      search_hex.zip(mask_hex).each_with_index do |(hex_search, hex_mask),i|
-        search_bit_length = full_bit_length(hex_search)
-        clauses << "#{config.transport}[#{start_byte(position)}:#{search_bit_length/8}] & #{hex_mask} = #{hex_search}"
-        position += search_bit_length
-      end
-
-      clauses.join(' && ')
+      search_hex.zip(mask_hex).map.with_index do |(hex_search, hex_mask),i|
+        "#{data_address(i*32, bit_length(hex_search))} & #{hex_mask} = #{hex_search}"
+      end.join(' && ')
     end
   end
 end
