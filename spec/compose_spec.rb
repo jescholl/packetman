@@ -10,18 +10,34 @@ module Packetman
         expect((compose.desired_length + Packetman.config.offset) % 8).to eq(0)
       end
     end
-    context 'with a short string' do
-      let(:compose) {Packetman::Compose.new('foo') }
+
+    context 'with a 4 character string' do
+
+      let(:compose) {Packetman::Compose.new('test') }
       describe '#bit_density' do
         it 'should be 8' do
           expect(compose.bit_density).to eq(8)
         end
       end
+
       describe '#to_s' do
         it 'should create one clause' do
           expect(compose.to_s).not_to match(/&&/)
         end
       end
+
+    end
+
+    context 'with a 3 character string' do
+
+      let(:compose) {Packetman::Compose.new('foo') }
+
+      describe '#to_s' do
+        it 'should create two clauses' do
+          expect(compose.to_s.split('&&').length).to be(2)
+        end
+      end
+
     end
 
     context 'with a long string' do

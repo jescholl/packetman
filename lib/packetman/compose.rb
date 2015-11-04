@@ -6,7 +6,7 @@ module Packetman
       @input = input
       @radix = radix
     end
-    
+
     def desired_length
       ((@input.length + config.offset)/8.to_f).ceil*8 - config.offset
     end
@@ -15,7 +15,7 @@ module Packetman
       (radix.nil?) ? 8 : Math.log2(radix).to_i
     end
 
-    def mask
+    def mask_bits
       shift(@input.scan(/./).map{ |c| mask_chr(c) }.join)
     end
 
@@ -27,7 +27,7 @@ module Packetman
       input.ljust(desired_length, '0')
     end
 
-    def search
+    def search_bits
       shift(@input.scan(/./).map{ |c| bin_chr(c) }.join)
     end
 
@@ -54,15 +54,15 @@ module Packetman
     end
 
     def mask_hex
-      hex_encode(mask)
+      hex_encode(mask_bits)
     end
 
     def search_hex
-      hex_encode(search)
+      hex_encode(search_bits)
     end
 
     def hex_encode(bin_str)
-      bin_str.reverse.scan(/.{1,4}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16) }.reverse.join.scan(/.{1,8}/).map{ |hex| hex.prepend('0x') }
+      bin_str.reverse.scan(/.{1,4}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16) }.reverse.join.scan(/.{8}|.{4}|.{2}/).map{ |hex| hex.prepend('0x') }
     end
 
     def bit_length(num)
@@ -85,8 +85,8 @@ module Packetman
     end
 
     def to_s
-      search_hex.zip(mask_hex).map.with_index do |(hex_search, hex_mask),i|
-        "#{data_address(i*32, bit_length(hex_search))} & #{hex_mask} = #{hex_search}"
+      search_hex.zip(mask_hex).map.with_index do |(search, mask),i|
+        "#{data_address(i*32, bit_length(search))} & #{mask} = #{search}"
       end.join(' && ')
     end
   end
