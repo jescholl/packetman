@@ -26,7 +26,7 @@ module Packetman
       end
     end
 
-    def parse_opts
+    def opts
       @opts ||= OptionParser.new do |opt|
         opt.banner = "Usage: #{File.basename($PROGRAM_NAME)} [OPTIONS] FILTER_STRING"
         opt.on("-p", "--protocol [PROTO]", protocols.keys, "Transport Protocol (#{protocols.keys.join(',')})") {|v| self.transport = v }
@@ -37,12 +37,12 @@ module Packetman
         opt.on("-w", "--wildcards", "Allow '?' wildcards") { |v| self.allow_wildcards = v }
         opt.on("-v", "--version", "Show version") { puts Packetman::VERSION; exit }
       end
+    end
 
-      @opts.parse!
-
-      raise "Invalid command line arguments" if ARGV.size != 1
-
-      ARGV.pop
+    def parse_opts
+      unparsed_opts = opts.parse!
+      raise "Invalid command line arguments" if unparsed_opts.size != 1
+      unparsed_opts.first
     end
 
   end

@@ -62,7 +62,11 @@ module Packetman
     end
 
     def hex_encode(bin_str)
-      bin_str.reverse.scan(/.{1,4}/).map{ |chunk| chunk.reverse.to_i(2).to_s(16) }.reverse.join.scan(/.{8}|.{4}|.{2}/).map{ |hex| hex.prepend('0x') }
+      bin_str.reverse.scan(/.{1,4}/).map{ |chunk|
+        chunk.reverse.to_i(2).to_s(16)
+      }.reverse.join.scan(/.{8}|.{4}|.{2}/).map{ |hex|
+        hex.prepend('0x')
+      }
     end
 
     def bit_length(num)
@@ -80,8 +84,8 @@ module Packetman
       [config.payload_query, (config.offset + bit_position)/8].compact.join(' + ')
     end
 
-    def data_address(start_bit, bit_length)
-      "#{config.transport}[#{start_byte(start_bit)}:#{bit_length/8}]"
+    def data_address(start_bit, data_bits)
+      "#{config.transport}[#{start_byte(start_bit)}:#{data_bits/8}]"
     end
 
     def to_s
