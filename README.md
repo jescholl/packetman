@@ -2,7 +2,11 @@
 
 Advanced tcpdump and Wireshark capture generator.
 
-[![Gem Version](https://badge.fury.io/rb/packetman.svg)](http://badge.fury.io/rb/packetman) [![Code Climate](https://codeclimate.com/github/jescholl/packetman/badges/gpa.svg)](https://codeclimate.com/github/jescholl/packetman) [![Test Coverage](https://codeclimate.com/github/jescholl/packetman/badges/coverage.svg)](https://codeclimate.com/github/jescholl/packetman/coverage) [![Circle CI](https://circleci.com/gh/jescholl/packetman.svg?style=svg)](https://circleci.com/gh/jescholl/packetman)
+[![Gem Version](https://badge.fury.io/rb/packetman.svg)](http://badge.fury.io/rb/packetman)
+[![Test Coverage](https://codeclimate.com/github/jescholl/packetman/badges/coverage.svg)](https://codeclimate.com/github/jescholl/packetman/coverage)
+[![Inline docs](http://inch-ci.org/github/jescholl/packetman.svg?branch=master)](http://inch-ci.org/github/jescholl/packetman)
+[![Circle CI](https://circleci.com/gh/jescholl/packetman.svg?style=svg)](https://circleci.com/gh/jescholl/packetman)
+[![Code Climate](https://codeclimate.com/github/jescholl/packetman/badges/gpa.svg)](https://codeclimate.com/github/jescholl/packetman)
 
 Packetman is a packet capture filter generator modeled after [Wireshark's String-Matching Capture Filter Generator](https://www.wireshark.org/tools/string-cf.html) but with a lot more features allowing much finer control over the packets you see.
 

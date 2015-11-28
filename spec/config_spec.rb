@@ -4,7 +4,7 @@ describe Packetman::Config do
   describe '#new' do
     it 'has default settings' do
       expect(Packetman.config.transport).not_to be_nil
-      expect(Packetman.config.offset).not_to be_nil
+      expect(Packetman.config.offset_bits).not_to be_nil
     end
   end
 
@@ -33,7 +33,7 @@ describe Packetman::Config do
     it 'should respect -o' do
       overwrite_constant :ARGV, %w{ -o 123 foo }
       Packetman.config.parse_opts
-      expect(Packetman.config.offset).to eq(123)
+      expect(Packetman.config.offset_bits).to eq(123)
     end
 
     it 'should respect -b' do
@@ -41,10 +41,21 @@ describe Packetman::Config do
       expect{Packetman.config.parse_opts}.to change{Packetman.config.use_bytes}.from(nil).to(true)
     end
 
-    it 'should respect -w' do
+    it 'should respect -w without args' do
       overwrite_constant :ARGV, %w{ -w foo }
       Packetman.config.parse_opts
-      expect(Packetman.config.allow_wildcards).to eq(true)
+      expect(Packetman.config.wildcard).to eq('?')
+    end
+
+    it 'should respect -w with args' do
+      overwrite_constant :ARGV, %w{ -w y foo }
+      Packetman.config.parse_opts
+      expect(Packetman.config.wildcard).to eq('y')
+    end
+
+    it "shouldn't allow multi character wildcards" do
+      overwrite_constant :ARGV, %w{ -w hello foo }
+      expect{Packetman.config.parse_opts}.to raise_error{"invalid wildcard"}
     end
   end
 end

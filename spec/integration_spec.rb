@@ -2,14 +2,15 @@ require 'spec_helper'
 
 module Packetman
   describe "integration" do
-    before(:each) { Packetman.config.allow_wildcards = true }
+    before(:each) { Packetman.config.wildcard = '?' }
     context "with 5 bit offset" do
 
-      let (:compose) { Packetman::Compose.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0", 2) }
+      let (:compose) { Packetman::Filter.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0") }
       let (:data)                            {"00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101"}
 
       before(:each) do
         Packetman.config.offset = 5
+        Packetman.config.radix = 2
       end
 
       describe "the raw data" do
@@ -39,11 +40,12 @@ module Packetman
 
     context "with 0 bit offset" do
 
-      let (:compose) { Packetman::Compose.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0", 2) }
+      let (:compose) { Packetman::Filter.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0") }
       let (:data)                            {"00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100"}
 
       before(:each) do
         Packetman.config.offset = 0
+        Packetman.config.radix = 2
       end
 
       describe "the raw data" do
@@ -81,31 +83,34 @@ module Packetman
     context 'with a 92 bit input string and 4 bit offset' do
       describe 'the output string' do
 
-        let (:compose) { Packetman::Compose.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????101001010101", 2) }
-        before(:each) { Packetman.config.offset = 4 }
+        let (:compose) { Packetman::Filter.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????101001010101") }
+        before(:each) {
+          Packetman.config.offset = 4
+          Packetman.config.radix = 2
+        }
 
         it 'should have have a 32 bit first clause' do
           clause = compose.to_s.split('&&')[0]
           search = clause.split('=').last.strip
-          expect(compose.bit_length(search)).to eq(32)
+          expect(Filter.bit_length(search)).to eq(32)
         end
 
         it 'should have have a 32 bit second clause' do
           clause = compose.to_s.split('&&')[1]
           search = clause.split('=').last.strip
-          expect(compose.bit_length(search)).to eq(32)
+          expect(Filter.bit_length(search)).to eq(32)
         end
 
         it 'should have have a 16 bit third clause' do
           clause = compose.to_s.split('&&')[2]
           search = clause.split('=').last.strip
-          expect(compose.bit_length(search)).to eq(16)
+          expect(Filter.bit_length(search)).to eq(16)
         end
 
         it 'should have have a 8 bit third clause' do
           clause = compose.to_s.split('&&')[3]
           search = clause.split('=').last.strip
-          expect(compose.bit_length(search)).to eq(8)
+          expect(Filter.bit_length(search)).to eq(8)
         end
 
         it 'should match the regex' do
