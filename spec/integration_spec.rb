@@ -3,10 +3,36 @@ require 'spec_helper'
 module Packetman
   describe "integration" do
     before(:each) { Packetman.config.wildcard = '?' }
+    context "with varying offsets" do
+      let (:compose) {Packetman::Filter.new("A")}
+      describe "the search and mask" do
+        it "should match the input, offset from 1-7" do
+          (1..7).each do |offset|
+            Packetman.config.offset = offset
+            parts = compose.to_s.match(/\] & (?<mask>[0-9a-fx]+) = (?<search>[0-9a-fx]+)/)
+
+            expect(parts['search'].to_i(16)).to eq("A".ord << 16-8-offset)
+            expect(parts['mask'].to_i(16)).to eq("11111111".to_i(2) << 16-8-offset)
+          end
+
+        end
+
+        it "should match the input, offset for 0 and 8" do
+          [0,8].each do |offset|
+            Packetman.config.offset = offset
+            parts = compose.to_s.match(/\] & (?<mask>[0-9a-fx]+) = (?<search>[0-9a-fx]+)/)
+
+            expect(parts['search'].to_i(16)).to eq("A".ord)
+            expect(parts['mask'].to_i(16)).to eq("11111111".to_i(2))
+          end
+
+        end
+      end
+    end
     context "with 5 bit offset" do
 
-      let (:compose) { Packetman::Filter.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0") }
-      let (:data)                            {"00011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101"}
+      let (:compose) { Packetman::Filter.new("00??1010?111?00010101??10101010?????1010111110???111110101001111010101??????????10100101010100011????1?0") } 
+      let (:data)                            {"1011000011010011100001010111101010101100110101111100101111101010011110101010010101001101001010101000110110100101"}
 
       before(:each) do
         Packetman.config.offset = 5
@@ -64,7 +90,7 @@ module Packetman
 
         it "should also match with 1 byte offset" do
           Packetman.config.offset = 1
-          Packetman.config.use_bytes = true
+          Packetman.config.offset_type = :bytes
           compose.search_hex.zip(compose.mask_hex, compose.hex_encode(data)).each do |search, mask, data|
             expect((data.to_i(16) & mask.to_i(16)).to_s(2)).to eq(search.to_i(16).to_s(2))
           end
@@ -88,30 +114,6 @@ module Packetman
           Packetman.config.offset = 4
           Packetman.config.radix = 2
         }
-
-        it 'should have have a 32 bit first clause' do
-          clause = compose.to_s.split('&&')[0]
-          search = clause.split('=').last.strip
-          expect(Filter.bit_length(search)).to eq(32)
-        end
-
-        it 'should have have a 32 bit second clause' do
-          clause = compose.to_s.split('&&')[1]
-          search = clause.split('=').last.strip
-          expect(Filter.bit_length(search)).to eq(32)
-        end
-
-        it 'should have have a 16 bit third clause' do
-          clause = compose.to_s.split('&&')[2]
-          search = clause.split('=').last.strip
-          expect(Filter.bit_length(search)).to eq(16)
-        end
-
-        it 'should have have a 8 bit third clause' do
-          clause = compose.to_s.split('&&')[3]
-          search = clause.split('=').last.strip
-          expect(Filter.bit_length(search)).to eq(8)
-        end
 
         it 'should match the regex' do
           hex_chars = "0-9a-fx"

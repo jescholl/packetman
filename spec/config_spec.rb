@@ -38,13 +38,7 @@ describe Packetman::Config do
 
     it 'should respect -b' do
       overwrite_constant :ARGV, %w{ -b foo }
-      expect{Packetman.config.parse_opts}.to change{Packetman.config.use_bytes}.from(nil).to(true)
-    end
-
-    it 'should respect -w without args' do
-      overwrite_constant :ARGV, %w{ -w foo }
-      Packetman.config.parse_opts
-      expect(Packetman.config.wildcard).to eq('?')
+      expect{Packetman.config.parse_opts}.to change{Packetman.config.offset_type}.from(:bits).to(:bytes)
     end
 
     it 'should respect -w with args' do

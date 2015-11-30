@@ -8,9 +8,9 @@ module Packetman
     context 'with a binary string with wildcards' do
       let (:compose) { Packetman::Filter.new("00??10100011???????"){ |config| config.radix = 2 } }
 
-      describe '#desired_length' do
+      describe '#target_bit_length' do
         it 'should be divisible by 8 when added to offset' do
-          expect((compose.desired_length + Packetman.config.offset) % 8).to eq(0)
+          expect((compose.target_bit_length + Packetman.config.offset) % 8).to eq(0)
         end
       end
     end
@@ -31,24 +31,6 @@ module Packetman
       describe '#bit_density' do
         it 'should be 8' do
           expect(Filter.bit_density).to eq(8)
-        end
-      end
-
-      describe '#to_s' do
-        it 'should create one clause' do
-          expect(compose.to_s).not_to match(/&&/)
-        end
-      end
-
-    end
-
-    context 'with a 3 character string' do
-
-      let(:compose) { Packetman::Filter.new('foo') }
-
-      describe '#to_s' do
-        it 'should create two clauses' do
-          expect(compose.to_s.split('&&').length).to be(2)
         end
       end
 

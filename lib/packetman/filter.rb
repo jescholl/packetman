@@ -13,33 +13,36 @@ module Packetman
       case num
       when /^0x/
         $'.length * bit_density(16)
-      when /^0b/
-        $'.length * bit_density(2)
       else
         nil
       end
     end
 
     def self.bit_density(radix=config.radix)
-      (radix.nil?) ? 8 : Math.log2(radix).to_i
+      (radix.nil?) ? 8 : Math.log2(radix).ceil
     end
 
     def map_chr
-      pad_right(input.scan(/./).map{ |chr| yield chr }.join)
+      shift_and_pad(input.scan(/./).map{ |chr| yield chr }.join)
     end
 
-    def pad_right(bin_str)
-      bin_str.ljust(desired_length, '0')
+    def shift_and_pad(bin_str)
+      #shift
+      bin_str.ljust(target_bit_length, '0').
+      #pad
+        rjust(target_bit_length + config.offset_bits % 8, '0')
     end
 
-    def desired_length
-      ((input.length + config.offset_bits)/8.to_f).ceil*8 - config.offset_bits
+    def target_bit_length
+      ((input.length*self.class.bit_density + config.offset_bits)/8.to_f).ceil*8 - config.offset_bits
     end
 
+    # Mask for 1 character of current radix
     def radix_mask
       ("1"*self.class.bit_density).to_i(2)
     end
 
+    # Mask string for _chr_ substituting wildcards as necessary
     def mask_chr(chr)
       if chr == config.wildcard
         0
@@ -48,6 +51,7 @@ module Packetman
       end.to_s(2).rjust(self.class.bit_density, '0')
     end
 
+    # Binary string for _chr_ substituting wildcards as necessary
     def bin_chr(chr)
       chr = '0' if chr == config.wildcard
 
@@ -67,6 +71,7 @@ module Packetman
       hex_encode(map_chr{ |c| bin_chr(c) })
     end
 
+    # Transform _bin_str_ to array of 32, 16, and 8 bit hex encoded strings
     def hex_encode(bin_str)
       bin_str.reverse.scan(/.{1,4}/).map{ |chunk|
         chunk.reverse.to_i(2).to_s(16)
@@ -75,14 +80,18 @@ module Packetman
       }
     end
 
-    def to_s
-      offset = 0
+    def clauses
+      start_bit = 0
       [].tap do |filter|
         search_hex.zip(mask_hex).each do |search, mask|
-          filter << Packetman::Clause.new(search, mask, offset)
-          offset += self.class.bit_length(search)
+          filter << Packetman::Clause.new(search, mask, start_bit)
+          start_bit += self.class.bit_length(search)
         end
-      end.map{ |b| b.to_s }.join(' && ')
+      end
+    end
+
+    def to_s
+      clauses.map{ |clause| clause.to_s }.join(' && ')
     end
 
   end

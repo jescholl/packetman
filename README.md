@@ -1,6 +1,6 @@
 # Packetman
 
-Advanced tcpdump and Wireshark capture generator.
+Advanced tcpdump and Wireshark filter string generator.
 
 [![Gem Version](https://badge.fury.io/rb/packetman.svg)](http://badge.fury.io/rb/packetman)
 [![Test Coverage](https://codeclimate.com/github/jescholl/packetman/badges/coverage.svg)](https://codeclimate.com/github/jescholl/packetman/coverage)
@@ -38,7 +38,40 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ packetman -h
+    
+    Usage: packetman [OPTIONS] FILTER_STRING
+        -p, --protocol PROTO             Transport Protocol (tcp,udp,icmp)
+        -t, --transport                  OFFSET starts at transport header instead of data payload
+        -r, --radix RADIX                Treat FILTER_STRING as RADIX instead of String
+        -o, --offset OFFSET              Offset in bits
+        -b, --byte-offset                Use 8-bit bytes instead of bits for offset
+        -w, --wildcard [CHARACTER=?]     Treat CHARACTER as single-character wildcard
+        -v, --version                    Show version
+
+Create and use a filter string to capture all HTTP GET requests to `/foo/bar`
+
+    $ sudo tcpdump -nA `packetman GET /foo/bar`
+    tcpdump: data link type PKTAP
+    tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+    listening on pktap, link-type PKTAP (Packet Tap), capture size 262144 bytes
+    16:49:04.516409 IP 127.0.0.1.54662 > 127.0.0.1.80: Flags [P.], seq 1488105913:1488105994, ack 1397163988, win 4121, options [nop,nop,TS val 875380202 ecr 2751916352], length 81: HTTP: GET /foo/bar HTTP/1.1
+    .....b....j...E.....@.@..S..
+    ..:.....PX...SG......75.....
+    4-=....@GET /foo/bar HTTP/1.1
+    Host: localhost
+    User-Agent: curl/7.43.0
+    Accept: */*
+
+Hexadecimal string with wildcards
+
+    $ packetman -r 16 -w '?' "A8C401???C200A"
+    tcp[((tcp[12:1] & 0xf0) >> 2) + 0:4] & 0xffffff00 = 0xa8c40100 && tcp[((tcp[12:1] & 0xf0) >> 2) + 4:2] & 0x0fff = 0x0c20 && tcp[((tcp[12:1] & 0xf0) >> 2) + 6:1] & 0xff = 0x0a
+
+Base 4 string with wildcards and offset beginning at start of the TCP header
+
+    $ packetman -t -o 3 -r 4 -w i 1223iiii2212
+    tcp[0:4] & 0x1fe01fe0 = 0x0d6014c0
 
 ## Development
 
