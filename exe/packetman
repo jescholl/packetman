@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'packetman'
 
-search_str = Packetman.config.parse_opts
+catch :exit do
+  search_str = Packetman.config.parse_opts
 
-puts Packetman::Filter.new(search_str)
+  puts Packetman::Filter.new(search_str)
+end

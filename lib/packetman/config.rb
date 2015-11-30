@@ -35,13 +35,17 @@ module Packetman
         opt.on("-o", "--offset OFFSET", Integer, "Offset in bits") { |v| self.offset = v }
         opt.on("-b", "--byte-offset", "Use 8-bit bytes instead of bits for offset") { |v| self.offset_type = :bytes if v }
         opt.on("-w", "--wildcard CHARACTER", "Treat CHARACTER as single-character wildcard") { |v| raise "invalid wildcard" if v.to_s.length > 1; self.wildcard = v }
-        opt.on("-v", "--version", "Show version") { puts Packetman::VERSION; exit }
+        opt.on("--table", "Show transport header table") { puts Packetman::Table.new; throw :exit }
+        opt.on("-v", "--version", "Show version") { puts Packetman::VERSION; throw :exit }
       end
     end
 
     def parse_opts
       unparsed_opts = opts.parse!
-      raise "Invalid command line arguments" if unparsed_opts.length < 1
+      if unparsed_opts.length < 1
+        puts opts
+        throw :exit
+      end
       unparsed_opts.join(" ")
     end
 
