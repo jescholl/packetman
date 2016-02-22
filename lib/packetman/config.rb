@@ -14,6 +14,10 @@ module Packetman
       @protocols ||= YAML.load(File.read(File.expand_path('../../../config/protocols.yml', __FILE__)))
     end
 
+    def applications
+      @applications ||= YAML.load(File.read(File.expand_path('../../../config/applications.yml', __FILE__)))
+    end
+
     def payload_query
       protocols[transport]['payload_query'] unless start_with_transport
     end
@@ -26,10 +30,18 @@ module Packetman
       end
     end
 
+    # FIXME figure out a way to do defaults so this can just set defaults
+    def application_override(app_name)
+      applications[app_name].each do |key, value|
+        __send__("#{key}=", value)
+      end
+    end
+
     def opts
       @opts ||= OptionParser.new do |opt|
         opt.banner = "Usage: #{File.basename($PROGRAM_NAME)} [OPTIONS] FILTER_STRING"
         opt.on("-p", "--protocol PROTO", protocols.keys, "Transport Protocol (#{protocols.keys.join(',')})") { |v| self.transport = v }
+        opt.on("-a", "--application APPLICATION", applications.keys, "Application Protocol (#{applications.keys.join(',')}) OVERRIDES ALL OTHER SETTINGS") { |v| application_override(v) }
         opt.on("-t", "--transport", "OFFSET starts at transport header instead of data payload") { |v| self.start_with_transport = v }
         opt.on("-r", "--radix RADIX", Integer, "Treat FILTER_STRING as RADIX instead of String") { |v| self.radix = v }
         opt.on("-o", "--offset OFFSET", Integer, "Offset in bits") { |v| self.offset = v }

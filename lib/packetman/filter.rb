@@ -53,7 +53,7 @@ module Packetman
 
     # Binary string for _chr_ substituting wildcards as necessary
     def bin_chr(chr)
-      chr = '0' if chr == config.wildcard
+      chr = 0 if chr == config.wildcard
 
       if config.radix
         raise "invalid character '#{chr}' for radix=#{config.radix}" if chr.downcase != chr.to_i(config.radix).to_s(config.radix).downcase

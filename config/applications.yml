@@ -1,0 +1,7 @@
+---
+dns: # packetman -tbo 21 -p udp -w '.' 'google.com'
+  :offset: 21
+  :start_with_transport: true
+  :offset_type: :bytes
+  :wildcard: .
+  :transport: udp
