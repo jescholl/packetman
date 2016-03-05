@@ -51,7 +51,10 @@ module Packetman
       end.to_s(2).rjust(self.class.bit_density, '0')
     end
 
-    # Binary string for _chr_ substituting wildcards as necessary
+    # Converts the `chr` from `config.radix` to binary, substituting wildcards as necessary
+    #
+    # @param chr [String] character to convert to binary
+    # @return [String] binary string
     def bin_chr(chr)
       chr = '0' if chr == config.wildcard
 
