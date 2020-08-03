@@ -42,14 +42,14 @@ workflows:
   build:
     jobs:
       - build:
-          ruby_version: 2.1.10
-      - build:
-          ruby_version: 2.2.10
-      - build:
+          name: ruby_2_3_8
           ruby_version: 2.3.8
       - build:
+          name: ruby_2_4_10
           ruby_version: 2.4.10
       - build:
+          name: ruby_2_5_8
           ruby_version: 2.5.8
       - build:
+          name: ruby_2_6_6
           ruby_version: 2.6.6
