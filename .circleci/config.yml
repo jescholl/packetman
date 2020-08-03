@@ -1,0 +1,80 @@
+version: 2.1
+jobs:
+  job_template: &job_template
+    environment:
+      GEM_HOME: vendor/bundle
+    docker:
+      - image: ruby:$CIRCLE_JOB
+    working_directory: /tmp/project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-
+      - run:
+          name: Bundle install
+          command: >
+            gem install bundler -i vendor/bundle
+            && bundle install --path vendor/bundle
+      - run:
+          name: Prepare CodeClimate
+          command: >
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            && chmod +x ./cc-test-reporter
+      - save_cache:
+          key: v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /tmp/project/vendor
+      - run:
+          name: Run Tests
+          command: >
+            ./cc-test-reporter before-build
+            bundle exec rake spec
+            ./cc-test-reporter after-build
+
+  ruby_1_9_3:
+    <<: *job_template
+    docker:
+      - image: ruby:1.9.3
+  ruby_2_0_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.0.0
+  ruby_2_1_1:
+    <<: *job_template
+    docker:
+      - image: ruby:2.1.1
+  ruby_2_2_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.2.0
+  ruby_2_3_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.3.0
+  ruby_2_4_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.4.0
+  ruby_2_5_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.5.0
+  ruby_2_6_0:
+    <<: *job_template
+    docker:
+      - image: ruby:2.6.0
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - ruby_1_9_3
+      - ruby_2_0_0
+      - ruby_2_1_1
+      - ruby_2_2_0
+      - ruby_2_3_0
+      - ruby_2_4_0
+      - ruby_2_5_0
+      - ruby_2_6_0
