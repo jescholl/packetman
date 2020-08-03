@@ -1,10 +1,14 @@
 version: 2.1
 jobs:
-  job_template: &job_template
+  build:
+    parameters:
+      ruby_version:
+        description: Version of ruby to test
+        type: string
     environment:
       GEM_HOME: vendor/bundle
     docker:
-      - image: ruby:$CIRCLE_JOB
+      - image: circleci/ruby:<< parameters.ruby_version >>
     working_directory: /tmp/project
     steps:
       - checkout
@@ -33,48 +37,19 @@ jobs:
             bundle exec rake spec
             ./cc-test-reporter after-build
 
-  ruby_1_9_3:
-    <<: *job_template
-    docker:
-      - image: ruby:1.9.3
-  ruby_2_0_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.0.0
-  ruby_2_1_1:
-    <<: *job_template
-    docker:
-      - image: ruby:2.1.1
-  ruby_2_2_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.2.0
-  ruby_2_3_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.3.0
-  ruby_2_4_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.4.0
-  ruby_2_5_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.5.0
-  ruby_2_6_0:
-    <<: *job_template
-    docker:
-      - image: ruby:2.6.0
-
 workflows:
   version: 2
   build:
     jobs:
-      - ruby_1_9_3
-      - ruby_2_0_0
-      - ruby_2_1_1
-      - ruby_2_2_0
-      - ruby_2_3_0
-      - ruby_2_4_0
-      - ruby_2_5_0
-      - ruby_2_6_0
+      - build:
+          ruby_version: 2.1.10
+      - build:
+          ruby_version: 2.2.10
+      - build:
+          ruby_version: 2.3.8
+      - build:
+          ruby_version: 2.4.10
+      - build:
+          ruby_version: 2.5.8
+      - build:
+          ruby_version: 2.6.6
