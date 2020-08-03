@@ -1,0 +1,55 @@
+version: 2.1
+jobs:
+  build:
+    parameters:
+      ruby_version:
+        description: Version of ruby to test
+        type: string
+    environment:
+      GEM_HOME: vendor/bundle
+    docker:
+      - image: circleci/ruby:<< parameters.ruby_version >>
+    working_directory: /tmp/project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-
+      - run:
+          name: Bundle install
+          command: >
+            gem install bundler -i vendor/bundle
+            && bundle install --path vendor/bundle
+      - run:
+          name: Prepare CodeClimate
+          command: >
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            && chmod +x ./cc-test-reporter
+      - save_cache:
+          key: v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /tmp/project/vendor
+      - run:
+          name: Run Tests
+          command: >
+            ./cc-test-reporter before-build
+            bundle exec rake spec
+            ./cc-test-reporter after-build
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          name: ruby_2_3_8
+          ruby_version: 2.3.8
+      - build:
+          name: ruby_2_4_10
+          ruby_version: 2.4.10
+      - build:
+          name: ruby_2_5_8
+          ruby_version: 2.5.8
+      - build:
+          name: ruby_2_6_6
+          ruby_version: 2.6.6
