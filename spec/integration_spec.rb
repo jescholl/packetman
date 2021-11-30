@@ -127,5 +127,31 @@ module Packetman
       end
     end
 
+    context 'with a dns query' do
+      describe 'the output string' do
+
+        let (:compose) { Packetman::Filter.new("www.foobar.bazbat.com") }
+        before(:each) {
+          Packetman.config.application_override("dns")
+        }
+
+        it 'should match the regex' do
+          hex_chars = "0-9a-fx"
+          data_address = "\\[[\\(\\[0-9a-z\:& \\>+\\]\\)]+:\\d+\\]"
+          clause = "\\w+#{data_address} & [#{hex_chars}]+ = [#{hex_chars}]+"
+          regex = /(#{clause}( &&)? )+/
+
+          expect(compose.to_s).to match(regex)
+        end
+
+        it 'should respond correctly' do
+          correct_response = "udp[21:4] & 0xffffff00 = 0x77777700 && udp[25:4] & 0xffffffff = 0x666f6f62 && udp[29:4] & 0xffff00ff = 0x61720062 && udp[33:4] & 0xffffffff = 0x617a6261 && udp[37:4] & 0xff00ffff = 0x7400636f && udp[41:1] & 0xff = 0x6d"
+
+          expect(compose.to_s).to eq(correct_response)
+        end
+
+      end
+    end
+
   end
 end
