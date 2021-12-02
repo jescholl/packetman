@@ -5,3 +5,10 @@ dns: # packetman -tbo 21 -p udp -w '.' 'google.com'
   :offset_type: :bytes
   :wildcard: .
   :transport: udp
+
+tcp_dns: # packetman -bo 15 -p tcp -w '.' 'google.com'
+  :offset: 15
+  :start_with_transport: false
+  :offset_type: :bytes
+  :wildcard: .
+  :transport: tcp
