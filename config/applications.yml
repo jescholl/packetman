@@ -1,13 +1,13 @@
 ---
-dns: # packetman -tbo 21 -p udp -w '.' 'google.com'
-  :offset: 21
-  :start_with_transport: true
+dns: # packetman -bo 13 -p udp -w '.' 'google.com'
+  :offset: 13
+  :start_with_transport: false
   :offset_type: :bytes
   :wildcard: .
   :transport: udp
 
-tcp_dns: # packetman -bo 15 -p tcp -w '.' 'google.com'
-  :offset: 15
+dns_tcp: # packetman -bo 15 -p tcp -w '.' 'google.com'
+  :offset: 15 # DNS over TCP adds a 2 byte length field to the beginning of the standard DNS protocol
   :start_with_transport: false
   :offset_type: :bytes
   :wildcard: .
