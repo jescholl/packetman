@@ -5,6 +5,9 @@ jobs:
       ruby_version:
         description: Version of ruby to test
         type: string
+      bundler_version:
+        description: Version of bundler to use
+        type: string
     environment:
       GEM_HOME: vendor/bundle
     docker:
@@ -19,7 +22,7 @@ jobs:
       - run:
           name: Bundle install
           command: >
-            gem install bundler -i vendor/bundle
+            gem install bundler --version "<< parameters.bundler_version >>" -i vendor/bundle
             && bundle install --path vendor/bundle
       - run:
           name: Prepare CodeClimate
@@ -44,12 +47,16 @@ workflows:
       - build:
           name: ruby_2_3_8
           ruby_version: 2.3.8
+          bundler_version: 2.3.26
       - build:
           name: ruby_2_4_10
           ruby_version: 2.4.10
+          bundler_version: 2.3.26
       - build:
           name: ruby_2_5_8
           ruby_version: 2.5.8
+          bundler_version: 2.3.26
       - build:
           name: ruby_2_6_6
           ruby_version: 2.6.6
+          bundler_version: ~> 2.0
