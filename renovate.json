@@ -1,3 +1,10 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "regexManagers": [
+    {
+      "fileMatch": ["(^|/)\\w+.gemspec"],
+      "matchStrings": ["\\n\\s*\\w*.add_(?:development_)?dependency\\s*[\"'](?<depName>.+?)[\"']\\s*,\\s*[\"'](?<currentValue>.+?)[\"']"],
+      "datasourceTemplate": "rubygems"
+    }
+  ]
 }
