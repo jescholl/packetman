@@ -1,9 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["(^|/)\\w+.gemspec"],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)\\w+.gemspec/"],
       "matchStrings": ["\\n\\s*\\w*.add_(?:development_)?dependency\\s*[\"'](?<depName>.+?)[\"']\\s*,\\s*[\"'](?<currentValue>.+?)[\"']"],
       "datasourceTemplate": "rubygems"
     }
