@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
+  "extends": ["local>jescholl/renovate-config", "local>jescholl/renovate-config:automerge"],
   "customManagers": [
     {
       "customType": "regex",
